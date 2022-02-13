@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './User/users.module';
+import { UserInformationModule } from './UserInfomation/user.information.module';
 
 @Module({
   imports: [
@@ -13,15 +12,14 @@ import { UsersModule } from './users/users.module';
       port: 3306,
       username: 'root',
       password: '',
-      database: 'mydb',
+      database: 'nest-js-social-media-api',
       synchronize: true,
       autoLoadEntities: true,
     }),
     AuthModule,
-    UsersModule,
+    UserModule,
+    UserInformationModule,
     // import all module to app module
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

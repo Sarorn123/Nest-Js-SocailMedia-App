@@ -1,11 +1,24 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import {
+  Injectable,
+  UnauthorizedException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDto } from './dto/userLogin.dto';
+import { UserSignupDto } from './dto/userSignup.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../User/user.entity';
+import { Repository } from 'typeorm';
+import { UserService } from '../User/users.service';
+import { checkUserName } from './Condition/user.signup.condition';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private readonly userService: UserService,
+  ) {}
 
   private readonly users = [
     {
@@ -15,6 +28,30 @@ export class AuthService {
       email: 'john@gmailcom',
     },
   ];
+
+  async signup(userSignupDto: UserSignupDto): Promise<User> {
+    if (!userSignupDto.email && !userSignupDto.phone_number) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'email or phone require!',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (userSignupDto.password !== userSignupDto.confirm_password) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'confirm password not match!',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return this.userService.createUser(userSignupDto);
+  }
 
   async login(userLoginData: UserLoginDto) {
     const user = this.users.find(
