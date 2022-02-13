@@ -1,0 +1,11 @@
+-> trow error to front end <-
+
+if (!product) {
+    throw new HttpException(
+      {
+        status: HttpStatus.FORBIDDEN,
+        message: 'This product not exist!',
+      },
+      HttpStatus.FORBIDDEN,
+    );
+  }
