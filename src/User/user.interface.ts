@@ -1,7 +1,14 @@
 export interface User {
-  fullname: String;
-  email: String;
-  password: String;
+  id?: string;
+  fullname: string;
+  email_or_phone: string;
+  password: string;
+  profile_picture: string;
+  cover_picture: string;
+  photos_or_videos: [];
+  followers: [];
+  followings: [];
+  is_admin: boolean;
   created_at: Date;
   updated_at: Date;
 }

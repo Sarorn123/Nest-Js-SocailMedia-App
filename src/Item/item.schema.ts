@@ -10,6 +10,17 @@ export class Item {
 
   @Prop()
   color: string;
+
+  @Prop()
+  type: [String];
+
+  @Prop()
+  object_array: [
+    {
+      example: String;
+      price: Number;
+    },
+  ];
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

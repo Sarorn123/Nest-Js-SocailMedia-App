@@ -2,6 +2,13 @@ export class ItemDto {
   name: string;
   stock: number;
   color: string;
+  type: [String];
+  object_array: [
+    {
+      example: String;
+      price: Number;
+    },
+  ];
 }
 
 export function convert(item) {
