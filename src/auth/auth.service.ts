@@ -7,11 +7,8 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDto } from './dto/userLogin.dto';
 import { UserSignupDto } from './dto/userSignup.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../User/user.entity';
-import { Repository } from 'typeorm';
 import { UserService } from '../User/users.service';
-import { checkUserName } from './Condition/user.signup.condition';
+import { User } from '../User/user.interface';
 
 @Injectable()
 export class AuthService {
@@ -30,16 +27,6 @@ export class AuthService {
   ];
 
   async signup(userSignupDto: UserSignupDto): Promise<User> {
-    if (!userSignupDto.email && !userSignupDto.phone_number) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          message: 'email or phone require!',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
     if (userSignupDto.password !== userSignupDto.confirm_password) {
       throw new HttpException(
         {
@@ -50,7 +37,7 @@ export class AuthService {
       );
     }
 
-    return this.userService.createUser(userSignupDto);
+    return this.userService.addUser(userSignupDto);
   }
 
   async login(userLoginData: UserLoginDto) {

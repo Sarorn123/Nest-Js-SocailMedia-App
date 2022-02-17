@@ -2,23 +2,16 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './User/users.module';
-import { UserInformationModule } from './UserInfomation/user.information.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import config from './config/key';
+import { ItemModule } from './Item/item.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'nest-js-social-media-api',
-      synchronize: true,
-      autoLoadEntities: true,
-    }),
-    AuthModule,
+    MongooseModule.forRoot(config.DB_URL),
+    ItemModule,
     UserModule,
-    UserInformationModule,
+    AuthModule,
     // import all module to app module
   ],
 })

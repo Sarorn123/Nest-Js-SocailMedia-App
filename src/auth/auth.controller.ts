@@ -12,7 +12,6 @@ import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserSignupDto } from './dto/userSignup.dto';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
-import { checkUserName } from './Condition/user.signup.condition';
 import { HttpStatus } from '@nestjs/common';
 
 @Controller('/auth')

@@ -1,15 +1,13 @@
 import { IsNotEmpty, MaxLength } from 'class-validator';
 
 export class UserSignupDto {
-  @IsNotEmpty({ message: 'lastname is require !' })
+  @IsNotEmpty({ message: 'fullname is require !' })
   @MaxLength(255)
-  lastname: string;
+  fullname: string;
 
-  @IsNotEmpty({ message: 'firstname is require !' })
+  @IsNotEmpty({ message: 'email_or_phone is require !' })
   @MaxLength(255)
-  firstname: string;
-
-  email: string;
+  email_or_phone: string;
 
   @IsNotEmpty({ message: 'password is require !' })
   @MaxLength(255)
@@ -18,6 +16,4 @@ export class UserSignupDto {
   @IsNotEmpty({ message: 'confirm password is require !' })
   @MaxLength(255)
   confirm_password: string;
-
-  phone_number: string;
 }
