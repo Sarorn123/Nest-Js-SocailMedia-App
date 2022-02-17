@@ -10,14 +10,36 @@ import { userConverter } from './Convert/user.convert';
 export class UserService {
   constructor(
     @InjectModel('User')
-    private userModel: Model<User>,
+    protected userModel: Model<User>,
   ) {}
 
-  async addUser(user: UserSignupDto): Promise<any> {
-    const password = bcryptPassword(user.password);
-    const new_user = { ...user, password };
-    const userObject = await this.userModel.create(new_user);
-    return userConverter(userObject);
+  async addUser(userSignupDto: UserSignupDto): Promise<any> {
+    ///check fullname
+    const fullname_existed = await this.userModel.findOne({
+      fullname: userSignupDto.fullname,
+    });
+    if (fullname_existed) {
+      throw new HttpException(
+        { message: 'Fullname Already Exist!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    /// check email phone
+    const email_or_phone_exited = await this.userModel.findOne({
+      email_or_phone: userSignupDto.email_or_phone,
+    });
+    if (email_or_phone_exited) {
+      throw new HttpException(
+        { message: 'Email Or Phone Already Exist!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const password = bcryptPassword(userSignupDto.password);
+    userSignupDto = { ...userSignupDto, password };
+    const user = await this.userModel.create(userSignupDto);
+    return userConverter(user);
   }
 
   async editUser(id: string, updateUserDto: UpdateUserDto): Promise<any> {
@@ -28,6 +50,37 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    /// check fullname
+    const fullname_existed = await this.userModel
+      .findOne({
+        fullname: updateUserDto.fullname,
+      })
+      .where('_id')
+      .ne(id);
+
+    if (fullname_existed) {
+      throw new HttpException(
+        { message: 'Email Or Phone Already Exist!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    /// check email phone
+    const email_or_phone_exited = await this.userModel
+      .findOne({
+        email_or_phone: updateUserDto.email_or_phone,
+      })
+      .where('_id')
+      .ne(id);
+
+    if (email_or_phone_exited) {
+      throw new HttpException(
+        { message: 'Email Or Phone Already Exist!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     if (updateUserDto.password) {
       if (!updateUserDto.confirm_password) {
         throw new HttpException(

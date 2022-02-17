@@ -1,15 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './User/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import config from './config/key';
-import { ItemModule } from './Item/item.module';
 
 @Module({
   imports: [
     MongooseModule.forRoot(config.DB_URL),
-    ItemModule,
     UserModule,
     AuthModule,
     // import all module to app module

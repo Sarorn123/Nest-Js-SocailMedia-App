@@ -5,12 +5,18 @@ export const UserSchema = new mongoose.Schema({
   fullname: {
     type: String,
     maxlength: 255,
+    unique: true,
+  },
+  gender: {
+    type: Number,
+    maxlength: 1,
   },
   email_or_phone: {
     type: String,
     maxlength: 255,
     lowercase: true,
     trim: true,
+    unique: true,
   },
   password: {
     type: String,
