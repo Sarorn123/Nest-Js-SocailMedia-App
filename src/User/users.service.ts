@@ -5,6 +5,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './user.interface';
 import { userConverter } from './Convert/user.convert';
+import { UserLoginDto } from '../auth/dto/userLogin.dto';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
@@ -113,5 +115,12 @@ export class UserService {
     user.updated_at = new Date();
     await user.save();
     return userConverter(user);
+  }
+
+  async LoginUser(userLoginDto: UserLoginDto): Promise<User> {
+    const user = await this.userModel.findOne({
+      email_or_phone: userLoginDto.email_or_phone,
+    });
+    return user;
   }
 }

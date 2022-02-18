@@ -14,6 +14,7 @@ import { UserSignupDto, UpdateUserDto } from './dto/userSignup.dto';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from '../User/users.service';
 import { User } from '../User/user.interface';
+import { Public } from './route.protection';
 
 @Controller('/auth')
 export class AuthController {
@@ -22,6 +23,7 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
+  @Public()
   @Post('/signup')
   @UsePipes(ValidationPipe) // Validation data
   singup(@Body() userSignupDto: UserSignupDto): Promise<any> {
@@ -37,8 +39,9 @@ export class AuthController {
     return this.userService.editUser(id, updateUserDto);
   }
 
+  @Public()
   @Post('/login')
-  login(@Body() dto: UserLoginDto) {
-    return this.AuthService.login(dto);
+  login(@Body() userLogindto: UserLoginDto) {
+    return this.AuthService.login(userLogindto);
   }
 }

@@ -9,6 +9,8 @@ import { UserLoginDto } from './dto/userLogin.dto';
 import { UserSignupDto } from './dto/userSignup.dto';
 import { UserService } from '../User/users.service';
 import { User } from '../User/user.interface';
+import { comparePassword } from '../Hash/Bcrypt';
+import { userConverter } from '../User/Convert/user.convert';
 
 @Injectable()
 export class AuthService {
@@ -16,15 +18,6 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly userService: UserService,
   ) {}
-
-  private readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: '123',
-      email: 'john@gmailcom',
-    },
-  ];
 
   async signup(userSignupDto: UserSignupDto): Promise<User> {
     if (userSignupDto.password !== userSignupDto.confirm_password) {
@@ -40,25 +33,32 @@ export class AuthService {
     return this.userService.addUser(userSignupDto);
   }
 
-  async login(userLoginData: UserLoginDto) {
-    const user = this.users.find(
-      (user) => user.username === userLoginData.username,
-    );
+  async login(userLoginDto: UserLoginDto) {
+    const user = await this.userService.LoginUser(userLoginDto);
     if (!user) {
-      throw new UnauthorizedException('invalid cridentail');
-    }
-    if (user.password !== userLoginData.password) {
-      throw new UnauthorizedException('password not correct!');
+      throw new UnauthorizedException({ message: 'invalid cridentail' });
     }
 
-    return this.userToJwtToken(user.userId, user.email, 'admin');
+    if (!comparePassword(userLoginDto.password, user.password)) {
+      throw new UnauthorizedException({ message: 'invalid password' });
+    }
+    return this.userToJwtToken(user, user.id, user.email_or_phone, user.role);
   }
 
-  userToJwtToken(userId: number, email: string, type: string) {
-    return this.jwtService.sign({
+  userToJwtToken(
+    user: User,
+    userId: string,
+    email: string,
+    type: string,
+  ): Object {
+    const token = this.jwtService.sign({
       sub: userId,
       email,
       type: type,
     });
+    return {
+      user: userConverter(user),
+      token: token,
+    };
   }
 }

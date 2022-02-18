@@ -44,9 +44,9 @@ export const UserSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
-  is_admin: {
-    type: Boolean,
-    default: false,
+  role: {
+    type: String,
+    default: 'USER',
   },
   craeted_at: {
     type: Date,
