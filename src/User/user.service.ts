@@ -7,6 +7,9 @@ import { User } from './user.interface';
 import { userConverter } from './Convert/user.convert';
 import { UserLoginDto } from '../auth/dto/userLogin.dto';
 import { UnauthorizedException } from '@nestjs/common';
+import { Post } from '../Post/post.interface';
+import * as mongoose from 'mongoose';
+import { postConverter } from '../Post/Convert/post.convert';
 
 @Injectable()
 export class UserService {
@@ -118,9 +121,44 @@ export class UserService {
   }
 
   async LoginUser(userLoginDto: UserLoginDto): Promise<User> {
-    const user = await this.userModel.findOne({
-      email_or_phone: userLoginDto.email_or_phone,
-    });
+    const user = await this.userModel
+      .findOne({
+        email_or_phone: userLoginDto.email_or_phone,
+      })
+      .populate('posts');
     return user;
+  }
+
+  async addPostToUser(id: string, post: Post): Promise<any> {
+    const user = await this.userModel.findById(id);
+    user.posts.push(post);
+    return await user.save();
+  }
+  async removePostFromUser(
+    id: string,
+    post_id: string,
+    post: Object,
+  ): Promise<any> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        { message: 'User Not Found!', satus: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const user = await this.userModel.findById(id);
+    user.posts.splice(user.posts.indexOf(post_id), 1); //delete from array
+    await user.save();
+    return post;
+  }
+
+  async getAllPostsByUserId(id: string): Promise<any[]> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        { message: 'User Not Found!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const user = await this.userModel.findById(id).populate('posts');
+    return user.posts.map((post) => postConverter(post));
   }
 }

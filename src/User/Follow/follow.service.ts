@@ -1,4 +1,4 @@
-import { UserService } from '../users.service';
+import { UserService } from '../user.service';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as mongoose from 'mongoose';
 

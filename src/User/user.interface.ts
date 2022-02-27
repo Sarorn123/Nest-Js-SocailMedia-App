@@ -1,11 +1,12 @@
 export interface User {
   id?: string;
   fullname: string;
+  gender: number;
   email_or_phone: string;
   password: string;
   profile_picture: string;
   cover_picture: string;
-  photos_or_videos: String[];
+  posts: Object[];
   followers: String[];
   followings: String[];
   role: string;

@@ -5,6 +5,9 @@ export class UserSignupDto {
   @MaxLength(255)
   fullname: string;
 
+  @IsNotEmpty({ message: 'gender is require !' })
+  gender: number;
+
   @IsNotEmpty({ message: 'email_or_phone is require !' })
   @MaxLength(255)
   email_or_phone: string;

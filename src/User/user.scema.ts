@@ -1,4 +1,3 @@
-import { IsEmail } from 'class-validator';
 import * as mongoose from 'mongoose';
 
 export const UserSchema = new mongoose.Schema({
@@ -32,10 +31,12 @@ export const UserSchema = new mongoose.Schema({
     maxlength: 700,
     default: null,
   },
-  photos_or_videos: {
-    type: Array,
-    default: [],
-  },
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post',
+    },
+  ],
   followers: {
     type: Array,
     default: [],

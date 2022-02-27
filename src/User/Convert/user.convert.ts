@@ -8,7 +8,7 @@ export function userConverter(user: User) {
     followings: user.followings,
     profile_picture: user.profile_picture,
     cover_picture: user.cover_picture,
-    photos_or_videos: user.photos_or_videos,
+    // posts: user.posts,
     created_at: user.created_at,
     updated_at: user.updated_at,
   };

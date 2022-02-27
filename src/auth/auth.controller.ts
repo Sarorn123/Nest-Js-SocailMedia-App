@@ -12,7 +12,7 @@ import { UserLoginDto } from './dto/userLogin.dto';
 import { AuthService } from './auth.service';
 import { UserSignupDto, UpdateUserDto } from './dto/userSignup.dto';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
-import { UserService } from '../User/users.service';
+import { UserService } from '../User/user.service';
 import { User } from '../User/user.interface';
 import { Public } from './route.protection';
 

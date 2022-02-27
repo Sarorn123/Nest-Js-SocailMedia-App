@@ -7,7 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UserLoginDto } from './dto/userLogin.dto';
 import { UserSignupDto } from './dto/userSignup.dto';
-import { UserService } from '../User/users.service';
+import { UserService } from '../User/user.service';
 import { User } from '../User/user.interface';
 import { comparePassword } from '../Hash/Bcrypt';
 import { userConverter } from '../User/Convert/user.convert';
@@ -36,11 +36,11 @@ export class AuthService {
   async login(userLoginDto: UserLoginDto) {
     const user = await this.userService.LoginUser(userLoginDto);
     if (!user) {
-      throw new UnauthorizedException({ message: 'invalid cridentail' });
+      throw new UnauthorizedException({ message: 'Invalid cridentail' });
     }
 
     if (!comparePassword(userLoginDto.password, user.password)) {
-      throw new UnauthorizedException({ message: 'invalid password' });
+      throw new UnauthorizedException({ message: 'Invalid password' });
     }
     return this.userToJwtToken(user, user.id, user.email_or_phone, user.role);
   }
@@ -58,7 +58,23 @@ export class AuthService {
     });
     return {
       user: userConverter(user),
-      token: token,
+      jwt_token: token,
+      modules: this.modules,
     };
   }
+
+  readonly modules = [
+    {
+      id: 1,
+      name: 'Home',
+      url: '/home',
+      icon: null,
+    },
+    {
+      id: 2,
+      name: 'Profile',
+      url: '/profile',
+      icon: null,
+    },
+  ];
 }
