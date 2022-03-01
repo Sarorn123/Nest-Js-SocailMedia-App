@@ -6,7 +6,7 @@ import { JwtAuthGuard } from './auth/route.protection';
 import { APP_GUARD } from '@nestjs/core';
 import { PostModule } from './Post/post.module';
 import { CommentModule } from './Post/Comment/comment.module';
-import { keys } from 'Keys/keys';
+import { keys } from './Keys/keys';
 
 @Module({
   imports: [
