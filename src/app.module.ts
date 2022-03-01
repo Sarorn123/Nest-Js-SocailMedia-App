@@ -2,15 +2,15 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './User/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import config from './config/key';
 import { JwtAuthGuard } from './auth/route.protection';
 import { APP_GUARD } from '@nestjs/core';
 import { PostModule } from './Post/post.module';
 import { CommentModule } from './Post/Comment/comment.module';
+import { ProjectKey } from '../project_key';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(config.DB_URL),
+    MongooseModule.forRoot(ProjectKey.DB_URI),
     UserModule,
     AuthModule,
     PostModule,
