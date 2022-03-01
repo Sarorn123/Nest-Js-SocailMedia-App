@@ -19,8 +19,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "start:nodemon": "nodemon src/main.ts",
     "rorn:dev": "ts-node-dev src/main.ts",
-    "start:prod": "node dist/src/main.js",
-    "postinstall": "npm run prestart:prod"
+    "start:prod": "node dist/src/main.js"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
