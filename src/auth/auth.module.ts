@@ -5,14 +5,14 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.stategy';
 import { AuthController } from './auth.controller';
-import { ProjectKey } from '../../project_key';
+import { keys } from 'Keys/keys';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
     JwtModule.register({
-      secret: ProjectKey.SECRET_KEY,
+      secret: keys.SECRET_KEY,
       signOptions: { expiresIn: '60s' },
     }),
   ],

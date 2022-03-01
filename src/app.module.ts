@@ -6,11 +6,11 @@ import { JwtAuthGuard } from './auth/route.protection';
 import { APP_GUARD } from '@nestjs/core';
 import { PostModule } from './Post/post.module';
 import { CommentModule } from './Post/Comment/comment.module';
-import { ProjectKey } from '../project_key';
+import { keys } from 'Keys/keys';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(ProjectKey.DB_URI),
+    MongooseModule.forRoot(keys.DB_URI),
     UserModule,
     AuthModule,
     PostModule,
