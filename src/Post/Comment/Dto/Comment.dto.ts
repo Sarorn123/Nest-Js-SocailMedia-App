@@ -12,7 +12,7 @@ export class AddCommentDto {
   body: string;
 
   @IsOptional()
-  is_reply_to: Boolean;
+  is_reply_to: boolean;
 
   @IsOptional()
   parentId: string;

@@ -7,8 +7,8 @@ export interface User {
   profile_picture: string;
   cover_picture: string;
   posts: Object[];
-  followers: String[];
-  followings: String[];
+  followers: string[];
+  followings: string[];
   role: string;
   created_at: Date;
   updated_at: Date;
