@@ -6,7 +6,6 @@ import { Model } from 'mongoose';
 import { User } from './user.interface';
 import { userConverter } from './Convert/user.convert';
 import { UserLoginDto } from '../auth/dto/userLogin.dto';
-import { UnauthorizedException } from '@nestjs/common';
 import { Post } from '../Post/post.interface';
 import * as mongoose from 'mongoose';
 import { postConverter } from '../Post/Convert/post.convert';

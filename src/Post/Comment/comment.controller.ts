@@ -3,7 +3,6 @@ import { AddCommentDto } from './Dto/Comment.dto';
 import { CommentService } from './comment.service';
 import { User } from '../../User/user.interface';
 import { getUserLoggedIn } from '../../Decorator/user.decorator';
-import { Request } from 'express';
 
 @Controller('/comment')
 export default class CommentController {

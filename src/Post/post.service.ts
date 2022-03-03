@@ -14,7 +14,6 @@ import { postConverter } from './Convert/post.convert';
 import * as mongoose from 'mongoose';
 import { Comment } from './Comment/comment.interface';
 import { CommentService } from './Comment/comment.service';
-import { User } from '../User/user.interface';
 
 @Injectable()
 export class PostService {
@@ -55,9 +54,6 @@ export class PostService {
         HttpStatus.BAD_REQUEST,
       );
     }
-
-    console.log(userId, post.userId.id);
-
     if (userId !== post.userId.id) {
       throw new HttpException(
         { message: 'You Can Update Only Your Post!', status: false },

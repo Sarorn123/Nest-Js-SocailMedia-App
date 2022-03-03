@@ -72,10 +72,10 @@ export class CommentService {
     }
   }
 
-  async getAllCommentsByPost(id: string): Promise<any> {
+  async getAllCommentsByPost(postId: string): Promise<any> {
     const comments = await this.commentModel
       .find({
-        postId: id,
+        postId: postId,
         parentId: null,
       })
       .populate('userId');
