@@ -13,11 +13,13 @@ export default class CommentController {
     @Body() addCommentDto: AddCommentDto,
     @getUserLoggedIn() user: User,
   ) {
+    const userId = user.id;
+    addCommentDto = { ...addCommentDto, userId };
     return this.commentService.addComment(addCommentDto);
   }
 
   @Put('editComment/:id')
-  editPost(
+  async editComment(
     @Param('id') id,
     @Body() editPostDto: EditCommentDto,
     @getUserLoggedIn() user: User,
@@ -34,7 +36,7 @@ export default class CommentController {
   }
 
   @Delete('/deleteComment/:id')
-  deletePost(@Param('id') id, @getUserLoggedIn() user: User) {
+  async deleteComment(@Param('id') id, @getUserLoggedIn() user: User) {
     return this.commentService.deleteComment(id, user).catch((error) => {
       return {
         message: 'Comment Not Found!',

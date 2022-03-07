@@ -4,7 +4,7 @@ export class AddCommentDto {
   @IsNotEmpty()
   postId: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   userId: string;
 
   @IsNotEmpty()

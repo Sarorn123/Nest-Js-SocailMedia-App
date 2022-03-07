@@ -142,7 +142,7 @@ export class CommentService {
 
     await this.commentModel.findByIdAndDelete(id);
     return {
-      message: 'Delete successfully',
+      message: 'Delete Successfully',
       status: true,
     };
   }
