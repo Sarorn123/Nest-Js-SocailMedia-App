@@ -9,9 +9,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { Comment } from './comment.interface';
-import { AddCommentDto } from './Dto/Comment.dto';
+import { AddCommentDto, EditCommentDto } from './Dto/Comment.dto';
 import { PostService } from '../post.service';
 import { CommentConverter } from './Convert/comment.convert';
+import { User } from '../../../dist/User/user.interface';
 
 @Injectable()
 export class CommentService {
@@ -36,9 +37,8 @@ export class CommentService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      const new_comment = await this.commentModel.create(addCommentDto);
-      this.postService.addCommentToPost(addCommentDto.postId, new_comment);
-      return new_comment;
+
+      return await this.commentModel.create(addCommentDto);
     } else {
       if (!addCommentDto.parentId) {
         throw new HttpException(
@@ -101,5 +101,49 @@ export class CommentService {
       }),
     );
     return result;
+  }
+  async editComment(
+    id: string,
+    editCommentDto: EditCommentDto,
+    user: User,
+  ): Promise<Comment> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        { message: 'Comment Not found!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const my_comment = await this.commentModel.findById(id).populate('userId');
+    if (my_comment.userId.id !== user.id) {
+      throw new HttpException(
+        { message: 'You Can Only Delete Your Comment!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.commentModel.findByIdAndUpdate(id, editCommentDto);
+    return await this.commentModel.findById(id);
+  }
+
+  async deleteComment(id: string, user: User): Promise<object> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        { message: 'Comment Not found!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const my_comment = await this.commentModel.findById(id).populate('userId');
+    // return my_comment;
+    if (my_comment.userId.id !== user.id) {
+      throw new HttpException(
+        { message: 'You Can Only Delete Your Comment!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.commentModel.findByIdAndDelete(id);
+    return {
+      message: 'Delete successfully',
+      status: true,
+    };
   }
 }

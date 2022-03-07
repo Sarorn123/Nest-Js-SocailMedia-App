@@ -1,5 +1,5 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
-import { AddCommentDto } from './Dto/Comment.dto';
+import { Body, Controller, Post, Param, Put, Delete } from '@nestjs/common';
+import { AddCommentDto, EditCommentDto } from './Dto/Comment.dto';
 import { CommentService } from './comment.service';
 import { User } from '../../User/user.interface';
 import { getUserLoggedIn } from '../../Decorator/user.decorator';
@@ -16,27 +16,31 @@ export default class CommentController {
     return this.commentService.addComment(addCommentDto);
   }
 
-  // @Post('editPost/:id')
-  // editPost(@Param('id') id, @Body() addPostDto: AddPostDto) {
-  //   return this.postService.editPost(id, addPostDto);
-  // }
+  @Put('editComment/:id')
+  editPost(
+    @Param('id') id,
+    @Body() editPostDto: EditCommentDto,
+    @getUserLoggedIn() user: User,
+  ) {
+    return this.commentService
+      .editComment(id, editPostDto, user)
+      .catch((error) => {
+        return {
+          message: 'Comment Not Found!',
+          status: false,
+          error: error.message,
+        };
+      });
+  }
 
-  // @Get('/getComment/:id')
-  // getPost(@Param('id') id) {
-  //   return this.commentService.getComment(id);
-  // }
-
-  // @Get('/getAllPostsByUserId/:id')
-  // getAllPostsByUserId(@Param('id') id: string) {
-  //   return this.postService.getAllPostsByUserId(id);
-  // }
-
-  // @Post('/deletePost')
-  // @UsePipes(ValidationPipe)
-  // deletePost(@Body() deletePostDto: DeletePostDto) {
-  //   return this.postService.deletePost(
-  //     deletePostDto.postId,
-  //     deletePostDto.userId,
-  //   );
-  // }
+  @Delete('/deleteComment/:id')
+  deletePost(@Param('id') id, @getUserLoggedIn() user: User) {
+    return this.commentService.deleteComment(id, user).catch((error) => {
+      return {
+        message: 'Comment Not Found!',
+        status: false,
+        error: error.message,
+      };
+    });
+  }
 }
