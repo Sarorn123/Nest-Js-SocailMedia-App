@@ -18,7 +18,7 @@ export class CommentService {
   constructor(
     @InjectModel('Comment')
     protected commentModel: Model<Comment>,
-    @Inject(forwardRef(() => CommentService))
+    @Inject(forwardRef(() => CommentService)) // Use For Relation Forward It Mean Inject Each Other
     private readonly postService: PostService,
   ) {}
 

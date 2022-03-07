@@ -88,14 +88,14 @@ export class UserService {
     if (updateUserDto.password) {
       if (!updateUserDto.confirm_password) {
         throw new HttpException(
-          { message: 'confirm_password Is Requred!', status: false },
+          { message: 'Confirm_password Is Requred!', status: false },
           HttpStatus.BAD_REQUEST,
         );
       }
 
       if (updateUserDto.password !== updateUserDto.confirm_password) {
         throw new HttpException(
-          { message: 'confirm_password Not Correct!', status: false },
+          { message: 'Confirm_password Not Correct!', status: false },
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -120,11 +120,9 @@ export class UserService {
   }
 
   async LoginUser(userLoginDto: UserLoginDto): Promise<User> {
-    const user = await this.userModel
-      .findOne({
-        email_or_phone: userLoginDto.email_or_phone,
-      })
-      .populate('posts');
+    const user = await this.userModel.findOne({
+      email_or_phone: userLoginDto.email_or_phone,
+    });
     return user;
   }
 

@@ -24,7 +24,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
-          message: 'confirm password not match!',
+          message: 'Confirm password not match!',
         },
         HttpStatus.BAD_REQUEST,
       );

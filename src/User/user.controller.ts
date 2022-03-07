@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  HttpException,
-  Put,
-  Param,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { FollowService } from './Follow/follow.service';
 import { ActionFollowDto } from './Follow/Dto/follow.dto';
