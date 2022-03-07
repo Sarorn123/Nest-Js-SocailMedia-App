@@ -10,7 +10,7 @@ import { Public } from './route.protection';
 @Controller('/auth')
 export class AuthController {
   constructor(
-    private readonly AuthService: AuthService,
+    private readonly authService: AuthService,
     private readonly userService: UserService,
   ) {}
 
@@ -18,7 +18,7 @@ export class AuthController {
   @Post('/signup')
   @UsePipes(ValidationPipe) // Validation data
   singup(@Body() userSignupDto: UserSignupDto): Promise<any> {
-    return this.AuthService.signup(userSignupDto);
+    return this.authService.signup(userSignupDto);
   }
 
   @Put('/updateUser/:id')
@@ -33,6 +33,6 @@ export class AuthController {
   @Public()
   @Post('/login')
   login(@Body() userLogindto: UserLoginDto) {
-    return this.AuthService.login(userLogindto);
+    return this.authService.login(userLogindto);
   }
 }
