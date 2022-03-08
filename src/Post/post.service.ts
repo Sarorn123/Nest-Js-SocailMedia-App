@@ -12,8 +12,9 @@ import { AddPostDto, EditPostDto } from './Dto/post.dto';
 import { UserService } from '../User/user.service';
 import { postConverter } from './Convert/post.convert';
 import * as mongoose from 'mongoose';
-import { Comment } from './Comment/comment.interface';
 import { CommentService } from './Comment/comment.service';
+import { userConverter } from '../User/Convert/user.convert';
+import { User } from '../../dist/User/user.interface';
 
 @Injectable()
 export class PostService {
@@ -87,11 +88,17 @@ export class PostService {
     return this.userService.getAllPostsByUserId(id);
   }
 
-  async deletePost(postId: string, userId: string) {
-    const post = await this.postModel.findById(postId);
-    if (!post) {
+  async deletePost(postId: string, userId: string, user: User) {
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
       throw new HttpException(
         { message: 'Post Not Found!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const post = await this.postModel.findById(postId);
+    if (user.id !== userId) {
+      throw new HttpException(
+        { message: 'You Can Delete Only Your Post!', status: false },
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -99,18 +106,54 @@ export class PostService {
     return this.userService.removePostFromUser(userId, postId, post);
   }
 
-  // Comment //
-
-  async addCommentToPost(id: string, comment: Comment): Promise<any> {
-    const post = await this.postModel.findById(id);
-    if (!post) {
+  async actionLikePost(id: string, userId: string): Promise<any> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException(
         { message: 'Post Not Found!', status: false },
         HttpStatus.BAD_REQUEST,
       );
     }
-    post.comments.push(comment);
-    post.save();
-    return;
+
+    const post = await this.postModel.findById(id);
+
+    const existed = post.likes.indexOf(userId) > -1;
+    if (!existed) {
+      post.likes.push(userId);
+      await post.save();
+      return {
+        message: 'liked',
+        status: true,
+      };
+    } else {
+      post.likes.splice(post.likes.indexOf(userId), 1); //delete from array
+      await post.save();
+      return {
+        message: 'Unliked',
+        status: true,
+      };
+    }
+  }
+  async getAllLikeByPostId(id: string, user: User): Promise<object> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        { message: 'Post Not Found!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const post = await this.postModel.findById(id);
+    const user_loggedIn = await this.userService.getUserById(user.id);
+    const user_data = [];
+
+    await Promise.all(
+      post.likes.map(async (userId) => {
+        const user_like = await this.userService.getUserById(userId);
+        if (user_like) {
+          const followed = user_loggedIn.followings.indexOf(userId) > -1;
+          const user_convert = userConverter(user_like, followed);
+          user_data.push(user_convert);
+        }
+      }),
+    );
+    return user_data;
   }
 }

@@ -1,6 +1,8 @@
 import { UserService } from '../user.service';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as mongoose from 'mongoose';
+import { User } from '../../../dist/User/user.interface';
+import { userConverter } from '../Convert/user.convert';
 
 @Injectable()
 export class FollowService extends UserService {
@@ -57,5 +59,55 @@ export class FollowService extends UserService {
         status: true,
       };
     }
+  }
+
+  async getAllUserFollowing(id: string, user: User): Promise<object> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        { message: 'User Not Found!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const user_loggedIn_data = await this.userModel.findById(user.id);
+    const user_data = await this.userModel.findById(id);
+    const user_following_array = [];
+
+    await Promise.all(
+      user_data.followings.map(async (userId) => {
+        const user_following = await this.userModel.findById(userId);
+        if (user_following) {
+          const followed = user_loggedIn_data.followings.indexOf(userId) > -1;
+          const user_convert = userConverter(user_following, followed);
+          user_following_array.push(user_convert);
+        }
+      }),
+    );
+
+    return user_following_array;
+  }
+
+  async getAllUserFollower(id: string, user: User): Promise<object> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        { message: 'User Not Found!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const user_loggedIn_data = await this.userModel.findById(user.id);
+    const user_data = await this.userModel.findById(id);
+    const user_following_array = [];
+
+    await Promise.all(
+      user_data.followers.map(async (userId) => {
+        const user_follower = await this.userModel.findById(userId);
+        if (user_follower) {
+          const followed = user_loggedIn_data.followings.indexOf(userId) > -1;
+          const user_convert = userConverter(user_follower, followed);
+          user_following_array.push(user_convert);
+        }
+      }),
+    );
+
+    return user_following_array;
   }
 }

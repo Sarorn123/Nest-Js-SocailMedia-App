@@ -13,12 +13,6 @@ export const PostSchema = new mongoose.Schema({
   },
   tages: [String],
   likes: [String],
-  comments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Comment',
-    },
-  ],
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

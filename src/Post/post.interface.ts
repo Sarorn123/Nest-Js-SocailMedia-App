@@ -7,7 +7,6 @@ export interface Post {
   post_status: string;
   tages: string[];
   likes: string[];
-  comments: Object[];
   created_at: Date;
   updated_at: Date;
   userId: User;

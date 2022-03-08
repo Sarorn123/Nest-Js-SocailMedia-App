@@ -36,10 +36,28 @@ export default class PostController {
 
   @Post('/deletePost')
   @UsePipes(ValidationPipe)
-  deletePost(@Body() deletePostDto: DeletePostDto) {
-    return this.postService.deletePost(
-      deletePostDto.postId,
-      deletePostDto.userId,
-    );
+  deletePost(
+    @Body() deletePostDto: DeletePostDto,
+    @getUserLoggedIn() user: User,
+  ) {
+    return this.postService
+      .deletePost(deletePostDto.postId, deletePostDto.userId, user)
+      .catch((err) => {
+        return {
+          message: 'Post Not Found!',
+          status: false,
+          error: err.message,
+        };
+      });
+  }
+
+  @Post('/actionLikePost/:id')
+  likePost(@Param('id') id, @getUserLoggedIn() user: User) {
+    return this.postService.actionLikePost(id, user.id);
+  }
+
+  @Get('/getAllLikeByPostId/:id')
+  getAllLikeByPostId(@Param('id') id, @getUserLoggedIn() user: User) {
+    return this.postService.getAllLikeByPostId(id, user);
   }
 }

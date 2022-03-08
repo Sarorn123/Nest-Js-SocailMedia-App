@@ -158,4 +158,8 @@ export class UserService {
     const user = await this.userModel.findById(id).populate('posts');
     return user.posts.map((post) => postConverter(post));
   }
+
+  async getUserById(id: string): Promise<User> {
+    return await this.userModel.findById(id);
+  }
 }
