@@ -61,7 +61,7 @@ export class FollowService extends UserService {
     }
   }
 
-  async getAllUserFollowing(id: string, user: User): Promise<object> {
+  async getAllUserFollowing(id: string, user: User): Promise<object[]> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException(
         { message: 'User Not Found!', status: false },
@@ -86,7 +86,7 @@ export class FollowService extends UserService {
     return user_following_array;
   }
 
-  async getAllUserFollower(id: string, user: User): Promise<object> {
+  async getAllUserFollower(id: string, user: User): Promise<object[]> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException(
         { message: 'User Not Found!', status: false },
@@ -95,7 +95,7 @@ export class FollowService extends UserService {
     }
     const user_loggedIn_data = await this.userModel.findById(user.id);
     const user_data = await this.userModel.findById(id);
-    const user_following_array = [];
+    const user_follower_array = [];
 
     await Promise.all(
       user_data.followers.map(async (userId) => {
@@ -103,11 +103,11 @@ export class FollowService extends UserService {
         if (user_follower) {
           const followed = user_loggedIn_data.followings.indexOf(userId) > -1;
           const user_convert = userConverter(user_follower, followed);
-          user_following_array.push(user_convert);
+          user_follower_array.push(user_convert);
         }
       }),
     );
 
-    return user_following_array;
+    return user_follower_array;
   }
 }

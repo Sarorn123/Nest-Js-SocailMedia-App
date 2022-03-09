@@ -12,7 +12,9 @@ import { Comment } from './comment.interface';
 import { AddCommentDto, EditCommentDto } from './Dto/Comment.dto';
 import { PostService } from '../post.service';
 import { CommentConverter } from './Convert/comment.convert';
-import { User } from '../../../dist/User/user.interface';
+import { User } from '../../User/user.interface';
+import { UserService } from '../../User/user.service';
+import { userConverter } from '../../User/Convert/user.convert';
 
 @Injectable()
 export class CommentService {
@@ -21,6 +23,7 @@ export class CommentService {
     protected commentModel: Model<Comment>,
     @Inject(forwardRef(() => CommentService)) // Use For Relation Forward It Mean Inject Each Other
     private readonly postService: PostService,
+    private readonly userService: UserService,
   ) {}
 
   async addComment(addCommentDto: AddCommentDto): Promise<Comment> {
@@ -116,7 +119,7 @@ export class CommentService {
     const my_comment = await this.commentModel.findById(id).populate('userId');
     if (my_comment.userId.id !== user.id) {
       throw new HttpException(
-        { message: 'You Can Only Delete Your Comment!', status: false },
+        { message: 'You Can Only Edit Your Comment!', status: false },
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -145,5 +148,57 @@ export class CommentService {
       message: 'Delete Successfully',
       status: true,
     };
+  }
+
+  async actionLikeComment(id: string, userId: string): Promise<object> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        { message: 'Comment Not Found!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const comment = await this.commentModel.findById(id);
+
+    const existed = comment.likes.indexOf(userId) > -1;
+    if (!existed) {
+      comment.likes.push(userId);
+      await comment.save();
+      return {
+        message: 'liked',
+        status: true,
+      };
+    } else {
+      comment.likes.splice(comment.likes.indexOf(userId), 1); //delete from array
+      await comment.save();
+      return {
+        message: 'Unliked',
+        status: true,
+      };
+    }
+  }
+
+  async getAllLikeByCommentId(id: string, user: User): Promise<object> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        { message: 'Comment Not Found!', status: false },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const comment = await this.commentModel.findById(id);
+    const user_loggedIn = await this.userService.getUserById(user.id);
+    const user_data = [];
+
+    await Promise.all(
+      comment.likes.map(async (userId) => {
+        const user_like = await this.userService.getUserById(userId);
+        if (user_like) {
+          const followed = user_loggedIn.followings.indexOf(userId) > -1;
+          const user_convert = userConverter(user_like, followed);
+          user_data.push(user_convert);
+        }
+      }),
+    );
+    return user_data;
   }
 }

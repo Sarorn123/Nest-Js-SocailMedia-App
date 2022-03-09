@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Param, Put, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Param,
+  Put,
+  Delete,
+  Get,
+} from '@nestjs/common';
 import { AddCommentDto, EditCommentDto } from './Dto/Comment.dto';
 import { CommentService } from './comment.service';
 import { User } from '../../User/user.interface';
@@ -44,5 +52,28 @@ export default class CommentController {
         error: error.message,
       };
     });
+  }
+
+  @Get('/actionLikeComment/:id')
+  async actionLikeComment(@Param('id') id, @getUserLoggedIn() user: User) {
+    return this.commentService.actionLikeComment(id, user.id).catch((error) => {
+      return {
+        message: 'Comment Not Found!',
+        status: false,
+        error: error.message,
+      };
+    });
+  }
+  @Get('/getAllLikeByCommentId/:id')
+  async getAllLikeByCommentId(@Param('id') id, @getUserLoggedIn() user: User) {
+    return this.commentService
+      .getAllLikeByCommentId(id, user)
+      .catch((error) => {
+        return {
+          message: 'Comment Not Found!',
+          status: false,
+          error: error.message,
+        };
+      });
   }
 }

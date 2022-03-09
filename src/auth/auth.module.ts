@@ -13,7 +13,7 @@ import { keys } from '../Keys/keys';
     PassportModule,
     JwtModule.register({
       secret: keys.SECRET_KEY,
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: '7d' },
     }),
   ],
   providers: [AuthService, JwtStrategy],
