@@ -7,6 +7,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { PostModule } from './Post/post.module';
 import { CommentModule } from './Post/Comment/comment.module';
 import { keys } from './Keys/keys';
+import { FileModule } from './File/file.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { keys } from './Keys/keys';
     AuthModule,
     PostModule,
     CommentModule,
+    FileModule,
     // import all module to app module
   ],
   providers: [
