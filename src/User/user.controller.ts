@@ -3,7 +3,7 @@ import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { FollowService } from './Follow/follow.service';
 import { ActionFollowDto } from './Follow/Dto/follow.dto';
 import { getUserLoggedIn } from '../Decorator/user.decorator';
-import { User } from '../../dist/User/user.interface';
+import { User } from './user.interface';
 
 @Controller('/user')
 export default class UserController {

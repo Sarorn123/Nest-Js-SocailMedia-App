@@ -14,7 +14,7 @@ import { postConverter } from './Convert/post.convert';
 import * as mongoose from 'mongoose';
 import { CommentService } from './Comment/comment.service';
 import { userConverter } from '../User/Convert/user.convert';
-import { User } from '../../dist/User/user.interface';
+import { User } from '../User/user.interface';
 
 @Injectable()
 export class PostService {

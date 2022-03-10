@@ -1,8 +1,8 @@
 import { UserService } from '../user.service';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as mongoose from 'mongoose';
-import { User } from '../../../dist/User/user.interface';
 import { userConverter } from '../Convert/user.convert';
+import { User } from '../user.interface';
 
 @Injectable()
 export class FollowService extends UserService {
