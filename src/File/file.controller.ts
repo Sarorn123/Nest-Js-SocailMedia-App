@@ -3,14 +3,21 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
+  Res,
+  Param,
 } from '@nestjs/common';
 import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { uuid } from 'uuidv4';
 import path = require('path');
+import { join } from 'path';
+import { of } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+
+import { UserService } from '../User/user.service';
+import { Get, HttpException, HttpStatus } from '@nestjs/common';
 
 export const FILEPATH = {
-  PROFILE_PICTURE: './Uploads/ProfilePictures',
+  PROFILE_PICTURE: './Uploads/ProfilePictures/',
 };
 
 export function storage(filePath: string) {
@@ -19,7 +26,7 @@ export function storage(filePath: string) {
       destination: filePath,
       filename: (req, file, cb) => {
         const filename: string =
-          path.parse(file.originalname).name.replace(/\s/g, '') + '_' + uuid();
+          path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
         const extension: string = path.parse(file.originalname).ext;
         cb(null, `${filename}${extension}`);
       },
@@ -27,16 +34,31 @@ export function storage(filePath: string) {
   };
 }
 
-@Controller('/file')
+@Controller('/file/upload')
 export default class FileController {
-  // constructor(private readonly followService: FollowService) {}
+  constructor(private readonly userService: UserService) {}
 
-  @Post('uploadSinglePicture')
+  @Post('/ProfilePicture/:id')
   @UseInterceptors(FileInterceptor('file', storage(FILEPATH.PROFILE_PICTURE)))
-  async uploadSinglePicture(@UploadedFile() file: Express.Multer.File) {
-    return (
-      'https://nest-api-socail-media.herokuapp.com/Uploads/ProfilePictures/' +
-      file.filename
+  uploadSinglePicture(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id') id,
+  ) {
+    return this.userService
+      .updateProfilePicture(id, file.filename)
+      .catch((err) => {
+        return {
+          message: 'User Not Found!',
+          status: false,
+          error: err.message,
+        };
+      });
+  }
+
+  @Get('/getProfilePicture/:filename')
+  async getProfilePicture(@Res() res, @Param('filename') filename) {
+    return of(
+      res.sendFile(join(process.cwd(), FILEPATH.PROFILE_PICTURE + filename)),
     );
   }
 }

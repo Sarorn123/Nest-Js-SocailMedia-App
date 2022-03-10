@@ -162,4 +162,20 @@ export class UserService {
   async getUserById(id: string): Promise<User> {
     return await this.userModel.findById(id);
   }
+
+  async updateProfilePicture(id: string, filename: string): Promise<User> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new HttpException(
+        {
+          message: 'User Not found!',
+          status: false,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const user = await this.userModel.findById(id);
+    user.profile_picture = filename;
+    await user.save();
+    return user;
+  }
 }
