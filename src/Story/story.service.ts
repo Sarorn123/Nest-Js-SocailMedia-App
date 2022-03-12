@@ -17,19 +17,18 @@ export class StoryService {
     private userService: UserService,
   ) {}
 
-  async getAllStory(user: User): Promise<any> {
+  async getAllStory(user: User): Promise<object[]> {
+    // get all my story in 24h
     const my_story: Story[] = await this.storyModel.find({
       userId: user.id,
       created_at: { $gt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
     });
     const user_loggedIn_data = await this.userService.getUserById(user.id);
-
-    const following_people = user_loggedIn_data.followings;
-
     const user_story_valid = [];
 
     await Promise.all(
-      following_people.map(async (friId) => {
+      user_loggedIn_data.followings.map(async (friId) => {
+        // get all fri story in 24h
         const fri_story: Story[] = await this.storyModel.find({
           userId: friId,
           created_at: { $gt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
