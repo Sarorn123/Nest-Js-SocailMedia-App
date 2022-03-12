@@ -5,6 +5,8 @@ import {
   UploadedFile,
   Res,
   Param,
+  Req,
+  Body,
 } from '@nestjs/common';
 import { diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -15,6 +17,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserService } from '../User/user.service';
 import { Get, HttpException, HttpStatus } from '@nestjs/common';
+import { Public } from '../auth/route.protection';
+import { UploadSingleImageDto } from './Dto/uploadfile.dto';
+import fs = require('fs');
 
 export const FILEPATH = {
   PROFILE_PICTURE: './Uploads/ProfilePictures/',
@@ -43,9 +48,20 @@ export default class FileController {
   uploadSinglePicture(
     @UploadedFile() file: Express.Multer.File,
     @Param('id') id,
+    @Req() req,
   ) {
+    const image_url: string =
+      req.protocol +
+      '://' +
+      req.get('host') +
+      `/file/upload/getProfilePicture/${file.filename}`;
     return this.userService
-      .updateProfilePicture(id, file.filename)
+      .updateProfilePicture(
+        id,
+        image_url,
+        FILEPATH.PROFILE_PICTURE,
+        file.filename,
+      )
       .catch((err) => {
         return {
           message: 'User Not Found!',
@@ -55,10 +71,22 @@ export default class FileController {
       });
   }
 
+  @Public()
   @Get('/getProfilePicture/:filename')
   async getProfilePicture(@Res() res, @Param('filename') filename) {
     return of(
       res.sendFile(join(process.cwd(), FILEPATH.PROFILE_PICTURE + filename)),
     );
+  }
+
+  // @Public()
+  @Get('/deleteFile/:filename')
+  async deleteFile(@Param('filename') filename) {
+    try {
+      fs.unlinkSync(FILEPATH.PROFILE_PICTURE + filename);
+      return 'Delete Successfully';
+    } catch (error) {
+      return error.message;
+    }
   }
 }

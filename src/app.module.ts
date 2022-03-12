@@ -8,6 +8,7 @@ import { PostModule } from './Post/post.module';
 import { CommentModule } from './Post/Comment/comment.module';
 import { keys } from './Keys/keys';
 import { FileModule } from './File/file.module';
+import { StoryModule } from './Story/story.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { FileModule } from './File/file.module';
     PostModule,
     CommentModule,
     FileModule,
+    StoryModule,
     // import all module to app module
   ],
   providers: [

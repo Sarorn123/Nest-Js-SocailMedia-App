@@ -7,7 +7,6 @@ export function userConverter(user: User, followed?: boolean) {
     followers: user.followers.length,
     followings: user.followings.length,
     profile_picture: user.profile_picture,
-    cover_picture: user.cover_picture,
     created_at: user.created_at,
     updated_at: user.updated_at,
 

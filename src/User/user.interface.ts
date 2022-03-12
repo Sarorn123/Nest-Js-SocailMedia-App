@@ -5,6 +5,7 @@ export interface User {
   email_or_phone: string;
   password: string;
   profile_picture: string;
+  profile_picture_name: string;
   cover_picture: string;
   posts: Object[];
   followers: string[];

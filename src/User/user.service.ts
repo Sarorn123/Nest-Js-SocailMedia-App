@@ -9,6 +9,7 @@ import { UserLoginDto } from '../auth/dto/userLogin.dto';
 import { Post } from '../Post/post.interface';
 import * as mongoose from 'mongoose';
 import { postConverter } from '../Post/Convert/post.convert';
+import fs = require('fs');
 
 @Injectable()
 export class UserService {
@@ -163,7 +164,12 @@ export class UserService {
     return await this.userModel.findById(id);
   }
 
-  async updateProfilePicture(id: string, filename: string): Promise<User> {
+  async updateProfilePicture(
+    id: string,
+    image_url: string,
+    file_path: string,
+    new_file_name: string,
+  ): Promise<object> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new HttpException(
         {
@@ -174,8 +180,15 @@ export class UserService {
       );
     }
     const user = await this.userModel.findById(id);
-    user.profile_picture = filename;
+
+    // For Delete File
+    try {
+      fs.unlinkSync(file_path + user.profile_picture_name);
+    } catch (error) {}
+
+    user.profile_picture = image_url;
+    user.profile_picture_name = new_file_name;
     await user.save();
-    return user;
+    return userConverter(user);
   }
 }

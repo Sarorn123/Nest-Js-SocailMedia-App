@@ -26,7 +26,7 @@ export const UserSchema = new mongoose.Schema({
     maxlength: 700,
     default: null,
   },
-  cover_picture: {
+  profile_picture_name: {
     type: String,
     maxlength: 700,
     default: null,
