@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as mongoose from 'mongoose';
@@ -7,7 +7,7 @@ import { User } from '../User/user.interface';
 import { AddStoryDto } from './Dto/Story.dto';
 import { UserService } from '../User/user.service';
 import { async } from 'rxjs';
-import { UserStoryConverter } from './Convert/story.convert';
+import { StoryConverter, UserStoryConverter } from './Convert/story.convert';
 
 @Injectable()
 export class StoryService {
@@ -38,7 +38,7 @@ export class StoryService {
           const user_data = await this.userService.getUserById(friId);
           let viewed: boolean = false;
           fri_story.map((story_object) => {
-            const existed = story_object.already_views.indexOf(user.id) > -1;
+            const existed = story_object.viewers.indexOf(user.id) > -1;
             if (existed) {
               viewed = true;
               return;
@@ -52,7 +52,7 @@ export class StoryService {
     if (my_story.length !== 0) {
       let viewed = false;
       my_story.map((story_object) => {
-        const existed = story_object.already_views.indexOf(user.id) > -1;
+        const existed = story_object.viewers.indexOf(user.id) > -1;
         if (existed) {
           viewed = true;
           return;
@@ -65,18 +65,38 @@ export class StoryService {
     return user_story_valid;
   }
 
-  async getStory(user: User): Promise<any> {
-    const my_story: object[] = await this.storyModel.find({
-      userId: user.id,
+  async getStory(id: string, user: User): Promise<any[]> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException({ message: 'User Not Found!' });
+    }
+    const story_array: Story[] = await this.storyModel.find({
+      userId: id,
       created_at: { $gt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
     });
 
-    return my_story;
+    const result = [];
+    story_array.map((story) => {
+      result.push(StoryConverter(story));
+    });
+    return result;
   }
 
   async addStory(user: User, addStoryDto: AddStoryDto): Promise<any> {
     const userId = user.id;
     addStoryDto = { ...addStoryDto, userId };
     return await this.storyModel.create(addStoryDto);
+  }
+  async deleteStory(id: string, user: User): Promise<any> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException({ message: 'Story Not Found!' });
+    }
+
+    const story = await this.storyModel.findById(id).populate('userId');
+    if (user.id !== story.userId.id) {
+      throw new BadRequestException({
+        message: 'You Can Only Delete Your Story!',
+      });
+    }
+    return await this.storyModel.remove(story);
   }
 }

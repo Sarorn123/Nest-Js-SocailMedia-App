@@ -17,7 +17,7 @@ export default class PostController {
 
   @Post('editPost/:id')
   editPost(
-    @Param('id') id,
+    @Param('id') id: string,
     @getUserLoggedIn() user: User,
     @Body() editPostDto: EditPostDto,
   ) {
@@ -25,7 +25,7 @@ export default class PostController {
   }
 
   @Get('/getPost/:id')
-  getPost(@Param('id') id) {
+  getPost(@Param('id') id: string) {
     return this.postService.getPost(id);
   }
 
@@ -52,12 +52,12 @@ export default class PostController {
   }
 
   @Post('/actionLikePost/:id')
-  likePost(@Param('id') id, @getUserLoggedIn() user: User) {
+  likePost(@Param('id') id: string, @getUserLoggedIn() user: User) {
     return this.postService.actionLikePost(id, user.id);
   }
 
   @Get('/getAllLikeByPostId/:id')
-  getAllLikeByPostId(@Param('id') id, @getUserLoggedIn() user: User) {
+  getAllLikeByPostId(@Param('id') id: string, @getUserLoggedIn() user: User) {
     return this.postService.getAllLikeByPostId(id, user);
   }
 }

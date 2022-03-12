@@ -15,7 +15,7 @@ export const StorySchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
-  already_views: {
+  viewers: {
     type: [String],
     default: [],
   },

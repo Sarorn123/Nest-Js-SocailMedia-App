@@ -28,7 +28,7 @@ export default class CommentController {
 
   @Put('editComment/:id')
   async editComment(
-    @Param('id') id,
+    @Param('id') id: string,
     @Body() editPostDto: EditCommentDto,
     @getUserLoggedIn() user: User,
   ) {
@@ -44,7 +44,7 @@ export default class CommentController {
   }
 
   @Delete('/deleteComment/:id')
-  async deleteComment(@Param('id') id, @getUserLoggedIn() user: User) {
+  async deleteComment(@Param('id') id: string, @getUserLoggedIn() user: User) {
     return this.commentService.deleteComment(id, user).catch((error) => {
       return {
         message: 'Comment Not Found!',
@@ -55,7 +55,10 @@ export default class CommentController {
   }
 
   @Get('/actionLikeComment/:id')
-  async actionLikeComment(@Param('id') id, @getUserLoggedIn() user: User) {
+  async actionLikeComment(
+    @Param('id') id: string,
+    @getUserLoggedIn() user: User,
+  ) {
     return this.commentService.actionLikeComment(id, user.id).catch((error) => {
       return {
         message: 'Comment Not Found!',
@@ -65,7 +68,10 @@ export default class CommentController {
     });
   }
   @Get('/getAllLikeByCommentId/:id')
-  async getAllLikeByCommentId(@Param('id') id, @getUserLoggedIn() user: User) {
+  async getAllLikeByCommentId(
+    @Param('id') id: string,
+    @getUserLoggedIn() user: User,
+  ) {
     return this.commentService
       .getAllLikeByCommentId(id, user)
       .catch((error) => {

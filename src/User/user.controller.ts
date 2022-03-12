@@ -19,12 +19,12 @@ export default class UserController {
   }
 
   @Get('/getAllUserFollowing/:id')
-  getAllUserFollowing(@Param('id') id, @getUserLoggedIn() user: User) {
+  getAllUserFollowing(@Param('id') id: string, @getUserLoggedIn() user: User) {
     return this.followService.getAllUserFollowing(id, user);
   }
 
   @Get('/getAllUserFollower/:id')
-  getAllUserFollower(@Param('id') id, @getUserLoggedIn() user: User) {
+  getAllUserFollower(@Param('id') id: string, @getUserLoggedIn() user: User) {
     return this.followService.getAllUserFollowing(id, user);
   }
 }

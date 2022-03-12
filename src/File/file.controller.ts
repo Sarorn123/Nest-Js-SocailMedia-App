@@ -47,7 +47,7 @@ export default class FileController {
   @UseInterceptors(FileInterceptor('file', storage(FILEPATH.PROFILE_PICTURE)))
   uploadSinglePicture(
     @UploadedFile() file: Express.Multer.File,
-    @Param('id') id,
+    @Param('id') id: string,
     @Req() req,
   ) {
     const image_url: string =

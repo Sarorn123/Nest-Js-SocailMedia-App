@@ -59,22 +59,6 @@ export class AuthService {
     return {
       user: userConverter(user),
       jwt_token: token,
-      modules: this.modules,
     };
   }
-
-  readonly modules = [
-    {
-      id: 1,
-      name: 'Home',
-      url: '/home',
-      icon: null,
-    },
-    {
-      id: 2,
-      name: 'Profile',
-      url: '/profile',
-      icon: null,
-    },
-  ];
 }

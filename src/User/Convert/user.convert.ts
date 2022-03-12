@@ -9,7 +9,6 @@ export function userConverter(user: User, followed?: boolean) {
     profile_picture: user.profile_picture,
     created_at: user.created_at,
     updated_at: user.updated_at,
-
-    followed: followed ? true : false,
+    followed: followed,
   };
 }
