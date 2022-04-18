@@ -18,7 +18,7 @@ export default class TodoController {
   //   });
   // }
   @Get('getAllTodoCategories')
-  async getAllTodoCategory(@getUserLoggedIn() user: User): Promise<any> {
+  async getAllTodoCategory(@getUserLoggedIn() user: User): Promise<Todo[]> {
     return this.todoService.getAllTodoCategory(user);
   }
 }
