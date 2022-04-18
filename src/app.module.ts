@@ -9,6 +9,7 @@ import { CommentModule } from './Post/Comment/comment.module';
 import { keys } from './Keys/keys';
 import { FileModule } from './File/file.module';
 import { StoryModule } from './Story/story.module';
+import { TodoModule } from './Todo/todo.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { StoryModule } from './Story/story.module';
     CommentModule,
     FileModule,
     StoryModule,
+    TodoModule,
     // import all module to app module
   ],
   providers: [

@@ -31,29 +31,27 @@ export default class StoryController {
     });
   }
 
-  @Post('addStory')
-  async addStory(
-    @getUserLoggedIn() user: User,
-    @Body() addStoryDto: AddStoryDto,
-  ): Promise<any> {
-    return this.storyService.addStory(user, addStoryDto).catch((error) => {
-      return {
-        message: error.message,
-        status: false,
-      };
-    });
-  }
-
-  @Delete('deleteStory/:id')
-  async deleteStory(
+  @Get('actionViewStory/:id')
+  async actionViewStory(
     @getUserLoggedIn() user: User,
     @Param('id') id: string,
-  ): Promise<Story> {
-    return this.storyService.deleteStory(id, user).catch((error) => {
-      return {
-        message: error.message,
-        status: false,
-      };
-    });
+  ): Promise<any> {
+    return this.storyService.actionViewStory(id, user);
+  }
+
+  @Get('actionLikeStory/:id')
+  async actionLikeStory(
+    @getUserLoggedIn() user: User,
+    @Param('id') id: string,
+  ): Promise<any> {
+    return this.storyService.actionLikeStory(id, user);
+  }
+
+  @Get('getAllStoryViewer/:id')
+  async getAllStoryViewer(
+    @getUserLoggedIn() user: User,
+    @Param('id') id: string,
+  ): Promise<any> {
+    return this.storyService.getAllStoryViewer(id, user);
   }
 }

@@ -6,8 +6,8 @@ import { Story } from './story.interface';
 import { User } from '../User/user.interface';
 import { AddStoryDto } from './Dto/Story.dto';
 import { UserService } from '../User/user.service';
-import { async } from 'rxjs';
 import { StoryConverter, UserStoryConverter } from './Convert/story.convert';
+import { userConverter } from '../User/Convert/user.convert';
 
 @Injectable()
 export class StoryService {
@@ -36,7 +36,7 @@ export class StoryService {
 
         if (fri_story.length !== 0) {
           const user_data = await this.userService.getUserById(friId);
-          let viewed: boolean = false;
+          let viewed = false;
           fri_story.map((story_object) => {
             const existed = story_object.viewers.indexOf(user.id) > -1;
             if (existed) {
@@ -81,10 +81,38 @@ export class StoryService {
     return result;
   }
 
-  async addStory(user: User, addStoryDto: AddStoryDto): Promise<any> {
-    const userId = user.id;
-    addStoryDto = { ...addStoryDto, userId };
-    return await this.storyModel.create(addStoryDto);
+  async addStory(
+    user: User,
+    image_url: string,
+    image_name: string,
+  ): Promise<Story> {
+    const storyDto = {
+      userId: user.id,
+      image_url: image_url,
+      image_name: image_name,
+    };
+    return await this.storyModel.create(storyDto);
+  }
+  async actionViewStory(id: string, user: User): Promise<any> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException({
+        message: 'Story Not Found!',
+        status: false,
+      });
+    }
+    const story = await this.storyModel.findById(id).populate('userId');
+    if (story.userId.id === user.id) {
+      return { message: 'viewed', status: true };
+    }
+
+    const existed = story.viewers.indexOf(user.id) > -1;
+    if (existed) {
+      return { message: 'viewed', status: true };
+    }
+
+    story.viewers.push(user.id);
+    story.save();
+    return { message: 'viewed', status: true };
   }
   async deleteStory(id: string, user: User): Promise<any> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -98,5 +126,70 @@ export class StoryService {
       });
     }
     return await this.storyModel.remove(story);
+  }
+  async actionLikeStory(id: string, user: User): Promise<any> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException({
+        message: 'Story Not Found!',
+        status: false,
+      });
+    }
+    const story = await this.storyModel.findById(id).populate('userId');
+    if (story.userId.id === user.id) {
+      return { message: 'Liked', status: true };
+    }
+
+    const liked = story.likes.indexOf(user.id) > -1;
+    if (liked) {
+      story.likes.splice(story.likes.indexOf(user.id, 1)); //delete from array
+      await story.save();
+      return {
+        message: 'Unliked',
+        status: true,
+      };
+    }
+
+    story.likes.push(user.id);
+    story.save();
+    return { message: 'Liked', status: true };
+  }
+  async getAllStoryViewer(id: string, user: User): Promise<any[]> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException({
+        message: 'Story Not Found!',
+        status: false,
+      });
+    }
+    const story = await this.storyModel.findById(id).populate('userId');
+    if (story.userId.id !== user.id) {
+      throw new BadRequestException({
+        message: 'You Can Only See Viewer On Your Story!',
+        status: false,
+      });
+    }
+    const user_loggedIn = await this.userService.getUserById(user.id);
+
+    const users = [];
+    await Promise.all(
+      story.viewers.map(async (userId: string) => {
+        const user: User = await this.userService.getUserById(userId);
+        if (user) {
+          const followed = user_loggedIn.followings.indexOf(userId) > -1;
+          users.push(userConverter(user, followed));
+        }
+      }),
+    );
+
+    return users;
+  }
+
+  async getStoryById(id: string) {
+    if (!mongoose.isValidObjectId(id)) {
+      throw new BadRequestException({
+        message: 'Story Not Found!',
+        status: false,
+      });
+    }
+    return await this.storyModel.findById(id);
   }
 }

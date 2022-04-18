@@ -11,6 +11,11 @@ export const StorySchema = new mongoose.Schema({
     maxlength: 1000,
     null: false,
   },
+  image_name: {
+    type: String,
+    maxlength: 1000,
+    null: false,
+  },
   likes: {
     type: [String],
     default: [],
