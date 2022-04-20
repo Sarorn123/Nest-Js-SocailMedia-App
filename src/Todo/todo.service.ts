@@ -6,7 +6,6 @@ import { Todo } from './todo.interface';
 import { User } from '../User/user.interface';
 import { UserService } from '../User/user.service';
 import { AddTodoDto } from './Dto/todo.dto';
-import { async } from 'rxjs';
 
 @Injectable()
 export class TodoService {
@@ -20,6 +19,9 @@ export class TodoService {
     const categories = await this.todoModel.find({
       userId: user.id,
       parentId: null,
+      oder: {
+        created_at: 'DESC',
+      },
     });
 
     const all = [];
@@ -74,6 +76,14 @@ export class TodoService {
   }
 
   async deleteTodo(id: string): Promise<Todo> {
+    const todo_child = await this.todoModel.find({ parentId: id });
+    if (todo_child.length !== 0) {
+      Promise.all(
+        todo_child.map(async (child) => {
+          await this.todoModel.findByIdAndDelete(child.id);
+        }),
+      );
+    }
     return await this.todoModel.findByIdAndRemove(id);
   }
 }
