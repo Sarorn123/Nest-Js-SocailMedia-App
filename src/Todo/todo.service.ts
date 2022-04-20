@@ -35,6 +35,7 @@ export class TodoService {
             id: category.id,
             title: category.title,
             description: category.description,
+            doned: category.doned,
             created_at: category.created_at,
             children: category_child,
           };

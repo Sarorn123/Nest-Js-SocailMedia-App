@@ -16,4 +16,7 @@ export class AddTodoDto {
   @IsOptional()
   @MaxLength(1000)
   parentId: string;
+
+  @IsOptional()
+  doned: boolean;
 }

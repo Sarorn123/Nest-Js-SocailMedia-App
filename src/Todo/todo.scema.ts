@@ -17,6 +17,10 @@ export const TodoSchema = new mongoose.Schema({
   parentId: {
     type: String,
   },
+  doned: {
+    type: Boolean,
+    default: false,
+  },
   created_at: {
     type: Date,
     default: Date.now(),

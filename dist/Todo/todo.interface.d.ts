@@ -4,6 +4,7 @@ export interface Todo {
     title: string;
     description: string;
     parentId: string;
+    doned: Boolean;
     created_at: Date;
     userId: User;
 }

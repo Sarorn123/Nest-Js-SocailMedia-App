@@ -3,4 +3,5 @@ export declare class AddTodoDto {
     description: string;
     userId: string;
     parentId: string;
+    doned: boolean;
 }

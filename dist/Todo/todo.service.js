@@ -26,6 +26,9 @@ let TodoService = class TodoService {
         const categories = await this.todoModel.find({
             userId: user.id,
             parentId: null,
+            oder: {
+                created_at: 'DESC',
+            },
         });
         const all = [];
         if (categories.length !== 0) {
@@ -68,6 +71,12 @@ let TodoService = class TodoService {
         return await this.todoModel.findById(todo_id);
     }
     async deleteTodo(id) {
+        const todo_child = await this.todoModel.find({ parentId: id });
+        if (todo_child.length !== 0) {
+            Promise.all(todo_child.map(async (child) => {
+                await this.todoModel.findByIdAndDelete(child.id);
+            }));
+        }
         return await this.todoModel.findByIdAndRemove(id);
     }
 };

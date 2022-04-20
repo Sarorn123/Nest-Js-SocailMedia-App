@@ -33,5 +33,9 @@ __decorate([
     (0, class_validator_1.MaxLength)(1000),
     __metadata("design:type", String)
 ], AddTodoDto.prototype, "parentId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], AddTodoDto.prototype, "doned", void 0);
 exports.AddTodoDto = AddTodoDto;
 //# sourceMappingURL=todo.dto.js.map
